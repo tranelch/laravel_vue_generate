@@ -1,0 +1,26 @@
+
+        //Add to boot method, consumed by models
+        Builder::macro('lfSearch', function ($attributes, ?string $searchTerm, ?string $baseTable=null) {
+            if(!$searchTerm || count($attributes) < 1) return $this;
+            $this->where(function (Builder $query) use ($attributes, $searchTerm, $baseTable) {
+                foreach (Arr::wrap($attributes) as $attribute) {
+                    $query->when(
+                        str_contains($attribute, '.'),
+                        function (Builder $query) use ($attribute, $searchTerm) {
+                            //[$relationName, $relationAttribute] = explode('.', $attribute);
+                            $relationName = implode('.', explode('.', $attribute, -1));
+                            $relationAttribute = str_replace($relationName . '.', '', $attribute);
+                            $query->orWhereHas($relationName, function (Builder $query) use ($relationAttribute, $searchTerm) {
+                                $query->where($relationAttribute, 'LIKE', "%{$searchTerm}%");
+                            });
+                        },
+                        function (Builder $query) use ($attribute, $searchTerm, $baseTable) {
+                            if ($baseTable) $attribute =  $baseTable . '.' . $attribute;
+                            $query->orWhere($attribute, 'LIKE', "%{$searchTerm}%");
+                        }
+                    );
+                }
+            });
+
+            return $this;
+        });
