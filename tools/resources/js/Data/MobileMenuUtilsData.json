@@ -1,0 +1,20 @@
+[
+    {
+        "title": "User Profile",
+        "link": "/user/profile",
+        "icon": "/i/icons/account.svg",
+        "iconComponent": "AccountIcon",
+        "class": "user",
+        "permissions": "",
+        "attributes": []
+    },
+    {
+        "title": "Logout",
+        "link": "/logout",
+        "icon": "/i/icons/logout.svg",
+        "iconComponent": "LogoutIcon",
+        "class": "logout",
+        "permissions": "",
+        "attributes": {"method":"post", "as":"button", "type":"button"}
+    }
+]

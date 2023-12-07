@@ -1,0 +1,11 @@
+[
+    {
+        "title": "User Profile",
+        "link": "/user/profile",
+        "icon": "/i/icons/account.svg",
+        "iconComponent": "AccountIcon",
+        "class": "user",
+        "permissions": "",
+        "attributes": []
+    }
+]

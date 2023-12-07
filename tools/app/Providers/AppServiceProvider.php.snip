@@ -1,6 +1,9 @@
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
+
         //Add to boot method, consumed by models
-        Builder::macro('lfSearch', function ($attributes, ?string $searchTerm, ?string $baseTable=null) {
+        Builder::macro('eiSearch', function ($attributes, ?string $searchTerm, ?string $baseTable=null) {
             if(!$searchTerm || count($attributes) < 1) return $this;
             $this->where(function (Builder $query) use ($attributes, $searchTerm, $baseTable) {
                 foreach (Arr::wrap($attributes) as $attribute) {
