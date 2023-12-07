@@ -12,7 +12,7 @@ $vue_info_line    </div>
 </template>
 
 <script>
-import InfoModalLayout from '@/Components/Layout/InfoModalLayout'
+import InfoModalLayout from '@/Components/Layout/InfoModalLayout.vue'
 
 export default {
   components: {
@@ -34,6 +34,6 @@ export default {
 if (!is_dir('generated/resources/js/Components/' . $text['camelUpper']['plural'])) {
     mkdir('generated/resources/js/Components/' . $text['camelUpper']['plural'], 0777, true);
 }
-$file = fopen('generated/resources/js/Components/' . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['singular'] . 'Info.vue',"w");
+$file = fopen('generated/resources/js/Components/' . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['singular'] . 'Info.vue', "w");
 fputs($file, $info_content);
 fclose($file);

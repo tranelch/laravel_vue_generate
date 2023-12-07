@@ -2,8 +2,9 @@
 $controller_content = "<?php
 /*
 FIND AND REPLACE
-{SECTION-camelUp}: Namespace and inertia modules
-{SECTION-camelPl}: Permissions
+\{SECTION-camelUp}: Namespace 
+{SECTION-camelUp}/: inertia modules
+{SECTION-camelPl}.: Permissions
 */
 declare(strict_types = 1);
 
@@ -13,6 +14,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use App\Models\\" . $text['camelUpper']['singular'] . ";
 
@@ -36,12 +38,11 @@ class " . $text['camelUpper']['plural'] . "Controller extends Controller
         try {
             $" . $text['camel']['plural'] . " = " . $text['camelUpper']['singular'] . "
             ::sort(\$sort)
-            ->filter(Request::only('search', 'trashed',$controller_filter_list))
+            ->filter(Request::only('search', 'trashed'$controller_filter_list))
             ->paginate(Request::filled('per_page') ? (int)Request::input('per_page') : 50)
             ->withQueryString()
             ->through(fn ($variable_obj_name) => [
-$field_list_controller_index
-            ]);
+$field_list_controller_index            ]);
         } catch (\Exception \$e) {
             Session::flash('error', \$e->getMessage());
             Log::debug(\$e->getMessage());
@@ -54,7 +55,6 @@ $field_list_controller_index
             'sort_orders' => Request::filled('sort_orders') ? Request::input('sort_orders') : [],
             '" . $text['camel']['plural'] . "' => $" . $text['camel']['plural'] . ",
         ]);
-
     }
 
     /**
@@ -112,7 +112,6 @@ $field_list_controller_index
 
         return Inertia::render('{SECTION-camelUp}/" . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['singular'] . "Edit', [
             '" . $text['camel']['singular'] . "' => $variable_obj_name,
-            'us_states' => config('common_vars.us_states'),
         ]);
     }
 
@@ -161,7 +160,7 @@ $field_list_controller_index
     public function export()
     {
         \$collection = " . $text['camelUpper']['singular'] . "
-            ::filter(Request::only('search', 'trashed', $controller_filter_list))
+            ::filter(Request::only('search', 'trashed'$controller_filter_list))
             ->get()
             ->makeHidden(['id', 'created_at', 'updated_at', 'deleted_at']);
         \$headings = [$field_list_quoted];
@@ -194,16 +193,17 @@ $field_list_controller_index
         }
     }
 
-    private function previousIsIndex() {
+    private function previousIsIndex()
+    {
         \$urlPieces = explode('?', url()->previous());
         return \$urlPieces[0] === action([" . $text['camelUpper']['plural'] . "Controller::class, 'index']);
     }
 }
 ";
 
-if (!is_dir('generated/Http/Controllers')) {
-    mkdir('generated/Http/Controllers', 0777, true);
+if (!is_dir('generated/app/Http/Controllers')) {
+    mkdir('generated/app/Http/Controllers', 0777, true);
 }
-$file = fopen('generated/Http/Controllers/'. $text['camelUpper']['plural'] . 'Controller.php',"w");
+$file = fopen('generated/app/Http/Controllers/'. $text['camelUpper']['plural'] . 'Controller.php', "w");
 fputs($file, $controller_content);
 fclose($file);

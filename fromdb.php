@@ -1,13 +1,13 @@
 <?php
 //BEGIN CONFIG SETTINGS
-$db_name = "lf_vessey";
+$db_name = "demo";
 $db_user = "root";
 $db_password = "root";
 $db_host = "localhost"; //usually localhost
 $db_table_prefix = "";
 $mysqli = mysqli_connect($db_host, $db_user, $db_password, $db_name);
 $exclude = ['migrations','oauth_access_tokens','oauth_auth_codes','oauth_clients','oauth_personal_access_clients',
-    'oauth_refresh_tokens','password_resets','personal_access_tokens','sessions','team_invitations','team_user','teams',
+    'oauth_refresh_tokens','password_resets','password_reset_tokens','personal_access_tokens','sessions','team_invitations','team_user','teams',
     'jobs',
 ];
 //END CONFIG SETTINGS
@@ -15,6 +15,12 @@ $exclude = ['migrations','oauth_access_tokens','oauth_auth_codes','oauth_clients
 require('includes/Pluralize.php');
 
 $arrTableResult = $mysqli->query("SHOW TABLES FROM `$db_name`");
+$routes = [
+    'base' => "/* FIND AND REPLACE\n{SECTION-camelPl}. : permissions\n{SECTION-camelUp}\ : controller path*/\n\n",
+    'admin' => "\n\n    Route::prefix('admin')->group(function () {"
+];
+$permissionsSql = "/* FIND AND REPLACE\n{SECTION-camelPl}. */\n\n";
+$menuData = "/* FIND AND REPLACE\n{SECTION-camelPl}. : permissions\n/{SECTION-kabob} : route path\n*/\n\n";
 
 while ($table = $arrTableResult->fetch_array()[0]) { //iterate through tables
     if (str_starts_with($table, 'liq_') || str_starts_with($table, 'jos') || str_starts_with($table, 'failed') || str_starts_with($table, 'error') || str_starts_with($table, 'acl')) {
@@ -91,13 +97,13 @@ while ($table = $arrTableResult->fetch_array()[0]) { //iterate through tables
             }
             if (!str_ends_with($field, '_id') && $field != 'id') {
                 if ($fieldObj->Type == 'datetime') {
-                    $imports_line .= "      '$field' => \$row[$count] ? ExcelDate::excelToDateTimeObject(\$row[$count])->format('Y-m-d H:i:s') : null,\n";
+                    $imports_line .= "            '$field' => \$row[$count] ? ExcelDate::excelToDateTimeObject(\$row[$count])->format('Y-m-d H:i:s') : null,\n";
                 } elseif ($fieldObj->Type == 'date') {
-                    $imports_line .= "      '$field' => \$row[$count] ? ExcelDate::excelToDateTimeObject(\$row[$count])->format('Y-m-d') : null,\n";
+                    $imports_line .= "            '$field' => \$row[$count] ? ExcelDate::excelToDateTimeObject(\$row[$count])->format('Y-m-d') : null,\n";
                 } elseif ($fieldObj->Type == 'time') {
-                    $imports_line .= "      '$field' => \$row[$count] ? ExcelDate::excelToDateTimeObject(\$row[$count])->format('H:i:s') : null,\n";
+                    $imports_line .= "            '$field' => \$row[$count] ? ExcelDate::excelToDateTimeObject(\$row[$count])->format('H:i:s') : null,\n";
                 } else {
-                    $imports_line .= "      '$field' => \$row[$count],\n";
+                    $imports_line .= "            '$field' => \$row[$count],\n";
                 }
                 if ($count % 2 === 0 && $count > 0) {
                     $vue_info_line .= "    </div>\n    <hr class=\"my-3\" />\n    <div class=\"grid grid-cols-1 lg:grid-cols-2 gap-4\">\n";
@@ -134,7 +140,7 @@ while ($table = $arrTableResult->fetch_array()[0]) { //iterate through tables
                 $field_list_controller_validation .= "            '$field' => ['nullable'],\n";
                 $vue_form_text .= "      <FormsToggleInput v-model:checked=\"form.$field\" id=\"$field\" name=\"$field\" label=\"$field_label\" :error=\"errors.$field\" />\n";
                 $model_filter_text .= "        })->when(\$filters['$field'] ?? null, function (\$query, \$$field) {\n            \$query->where('$table.$field', \$$field === 'yes' ? 1 : 0);\n";
-                $controller_filter_list .= " '$field',";
+                $controller_filter_list .= ", '$field'";
                 include('includes/VueReportFilter.php');
             } elseif (str_contains($fieldObj->Type, 'int')) {
                 $field_list_controller_validation .= "            '$field' => ['nullable', 'integer'],\n";
@@ -167,7 +173,7 @@ while ($table = $arrTableResult->fetch_array()[0]) { //iterate through tables
 
     public function scopeFilter(Builder \$query, array \$filters) {
         \$query->when(\$filters['search'] ?? null, function (\$query, \$search) {
-            \$query->earthSearch(\$this->searchColumns, \$search);
+            \$query->eiSearch(\$this->searchColumns, \$search);
 $model_filter_text
         })->when(\$filters['trashed'] ?? null, function (\$query, \$trashed) {
             if (\$trashed === 'with') {
@@ -228,11 +234,10 @@ $field_list_controller_validation        ];
     fputs(
         $file,
         "/* FIND AND REPLACE
-            {SECTION-camelPl}
-            {SECTION-camelUp}*/" . "\n\n" .
+            {SECTION-camelPl}. : permissions */" . "\n\n" .
         "MODEL SNIPPETS:\n" . $model_snippets . "\n\n" .
-        "ROUTES:\n" . $routes . "\n\n" .
-        "PERMISSION SQL:\n" . $permissionsSql . "\n\n" .
+        //"ROUTES:\n" . $routes . "\n\n" .
+        //"PERMISSION SQL:\n" . $permissionsSql . "\n\n" .
         "QUOTED FIELD LIST:\n" . $field_list_quoted . "\n\n" .
         "UNQUOTED FIELD LIST:\n" . $field_list_unquoted . "\n\n"
     );
@@ -254,6 +259,27 @@ $field_list_controller_validation        ];
     include('includes/ImportFile.php');
 } //while (list($table) = mysql_fetch_row($arrTableResult))
 
+// Write routes file
+if (!is_dir('generated/routes')) {
+    mkdir('generated/routes', 0777, true);
+}
+$file = fopen('generated/routes/web.php', "w");
+fputs($file, $routes['base']);
+fputs($file, $routes['admin'] . "\n    });\n");
+fclose($file);
+
+// Write permission file
+$file = fopen('generated/permissions.sql', "w");
+fputs($file, $permissionsSql);
+fclose($file);
+
+//Write menuData file
+if (!is_dir('generated/resources/js/Data')) {
+    mkdir('generated/resources/js/Data', 0777, true);
+}
+$file = fopen('generated/resources/js/Data/MainMenuData.json', "w");
+fputs($file, $menuData . file_get_contents('includes/MainMenuData.json'));
+fclose($file);
 
 function getTextFormats($table)
 {

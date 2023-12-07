@@ -36,18 +36,18 @@ $vue_report_line
 
 <script>
 import { ref, inject, computed } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Link } from '@inertiajs/inertia-vue3'
+import { Inertia } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import NProgress from 'nprogress'
 import " . $text['camelUpper']['singular'] . "Info from '@/Components/" . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['singular'] . "Info.vue'
-import Modal from '@/Components/Shared/Modal'
-import DataListingLayout from '@/Components/Layout/DataListingLayout'
-import GridButton from '@/Components/Shared/Grid/GridButton'
+import Modal from '@/Components/Shared/Modal.vue'
+import DataListingLayout from '@/Components/Layout/DataListingLayout.vue'
+import GridButton from '@/Components/Shared/Grid/GridButton.vue'
 import FilterSelectInput from '@/Components/Shared/Forms/FilterSelectInput.vue'
 
 import SoftDeletes from '@/Components/Shared/Grid/SoftDeletes.js'
 import Sort from '@/Components/Shared/Grid/Sort.js'
-import QueryString from '@/Components/Shared/Grid/QueryString.js'
+import useQuerystring from '@/composables/useQuerystring.js'
 
 export default {
   components: {
@@ -105,7 +105,7 @@ export default {
       ]
     })
     const {remove, restore} = SoftDeletes(emit)
-    const {getQueryString, getFilterQueryString} = QueryString()
+    const {getQueryString, getFilterQueryString} = useQuerystring()
     const sort = Sort(emit)
     sort.setSort(props.sort_columns, props.sort_orders)
     const has" . $text['camelUpper']['plural'] . " = computed( () => {
@@ -188,9 +188,9 @@ $index_content = "<template>
 </template>
 <script>
 import { ref, inject } from 'vue'
-import AppLayout from '@/Layouts/AppLayout'
-import { Link } from '@inertiajs/inertia-vue3';
-import " . $text['camelUpper']['plural'] . "List from '@/Components/" . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['plural'] . "List'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import { Link } from '@inertiajs/vue3';
+import " . $text['camelUpper']['plural'] . "List from '@/Components/" . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['plural'] . "List.vue'
 
 export default {
   components: {

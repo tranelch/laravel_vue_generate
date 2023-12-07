@@ -1,0 +1,48 @@
+[
+    {
+        "title": "Admin",
+        "link": "/admin",
+        "size": "large",
+        "class": "admin",
+        "permissions": "admin.",
+        "attributes": []
+    },
+    {
+        "title": "Users",
+        "link": "/admin/users",
+        "size": "small",
+        "class": "users",
+        "permissions": "admin.users.",
+        "attributes": []
+    },
+    {
+        "title": "Account",
+        "link": "",
+        "size": "large",
+        "class": "account",
+        "permissions": "",
+        "attributes": []
+    },
+    {
+        "title": "User Profile",
+        "link": "/user/profile",
+        "size": "small",
+        "class": "user",
+        "permissions": "",
+        "attributes": []
+    },
+    {
+        "title": "Logout",
+        "link": "/logout",
+        "icon": "/i/icons/logout.svg",
+        "iconComponent": "LogoutIcon",
+        "size": "large",
+        "class": "logout",
+        "permissions": "",
+        "attributes": {
+            "method": "post",
+            "as": "button",
+            "type": "button"
+        }
+    }
+]

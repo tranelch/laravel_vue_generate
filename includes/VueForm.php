@@ -13,7 +13,7 @@ $vue_form_text    </div>
 
 <script>
 import { ref, inject } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import ApiLookup from '@/Components/Shared/Forms/ApiLookup.vue'
 import FormsSelectInput from '@/Components/Shared/Forms/FormsSelectInput.vue'
 import FormsDateInput from '@/Components/Shared/Forms/FormsDateInput.vue'
@@ -22,7 +22,7 @@ import FormsTextInput from '@/Components/Shared/Forms/FormsTextInput.vue'
 import FormsNumberInput from '@/Components/Shared/Forms/FormsNumberInput.vue'
 import FormsToggleInput from '@/Components/Shared/Forms/FormsToggleInput.vue'
 import FormsTextareaInput from '@/Components/Shared/Forms/FormsTextareaInput.vue'
-import FormLayout from '@/Components/Layout/FormLayout'
+import FormLayout from '@/Components/Layout/FormLayout.vue'
 
 export default {
   components: {
@@ -97,19 +97,15 @@ fclose($file);
 $edit_page_content = "
 <template>
   <AppLayout title=\"Edit " . $text['spacedUpper']['singular'] . "\">
-    <" . $text['camelUpper']['plural'] . "EditForm :" . $text['camel']['singular'] . "=\"" . $text['camel']['singular'] . "\" :put_url=\"baseUrl + '/' + " . $text['camel']['singular'] . ".id\" :permissionBase=\"permissionBase\" :secondaryNav=\"secondaryNav\" :errors=\"errors\" />
+    <" . $text['camelUpper']['singular'] . "EditForm :" . $text['camel']['singular'] . "=\"" . $text['camel']['singular'] . "\" :put_url=\"baseUrl + '/' + " . $text['camel']['singular'] . ".id\" :permissionBase=\"permissionBase\" :secondaryNav=\"secondaryNav\" :errors=\"errors\" />
   </AppLayout>
 </template>
 
 <script>
-/* FIND AND REPLACE:
-{SECTION-camelSingular}: permissionBase
-{SECTION-kabob}: baseUrl
-*/
 import { ref, inject } from 'vue'
-import AppLayout from '@/Layouts/AppLayout'
-import { usePage } from '@inertiajs/inertia-vue3'
-import " . $text['camelUpper']['plural'] . "EditForm from '@/Components/" . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['plural'] . "EditForm.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import { usePage } from '@inertiajs/vue3'
+import " . $text['camelUpper']['singular'] . "EditForm from '@/Components/" . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['singular'] . "EditForm.vue'
 
 export default {
   components: {
@@ -159,15 +155,19 @@ fclose($file);
 $create_page_content = "
 <template>
   <AppLayout title=\"Create " . $text['spacedUpper']['singular'] . "\">
-    <" . $text['camelUpper']['plural'] . "EditForm :" . $text['camel']['singular'] . "=\"" . $text['camel']['singular'] . "\" :post_url=\"baseUrl\" :permissionBase=\"permissionBase\" :secondaryNav=\"secondaryNav\" :errors=\"errors\" />
+    <" . $text['camelUpper']['singular'] . "EditForm :" . $text['camel']['singular'] . "=\"" . $text['camel']['singular'] . "\" :post_url=\"baseUrl\" :permissionBase=\"permissionBase\" :secondaryNav=\"secondaryNav\" :errors=\"errors\" />
   </AppLayout>
 </template>
 
 <script>
+/* FIND AND REPLACE:
+{SECTION-camelSingular} : permissionBase
+{SECTION-kabob}/ : baseUrl
+*/
 import { ref, inject } from 'vue'
-import AppLayout from '@/Layouts/AppLayout'
-import { usePage } from '@inertiajs/inertia-vue3'
-import " . $text['camelUpper']['plural'] . "EditForm from '@/Components/" . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['plural'] . "EditForm.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import { usePage } from '@inertiajs/vue3'
+import " . $text['camelUpper']['singular'] . "EditForm from '@/Components/" . $text['camelUpper']['plural'] . "/" . $text['camelUpper']['singular'] . "EditForm.vue'
 
 export default {
   components: {

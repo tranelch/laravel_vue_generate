@@ -37,8 +37,7 @@ class " . $text['camelUpper']['plural'] . "Import implements ToModel, WithBatchI
         \$row = array_values(\$row);
 
         return new " . $text['camelUpper']['singular'] . "([
-$imports_line
-        ]);
+$imports_line        ]);
     }
 
     public function rules(): array
@@ -48,9 +47,9 @@ $imports_line
 }
 ";
 
-if (!is_dir('generated/Imports')) {
-    mkdir('generated/Imports', 0777, true);
+if (!is_dir('generated/app/Imports')) {
+    mkdir('generated/app/Imports', 0777, true);
 }
-$file = fopen('generated/Imports/'. $text['camelUpper']['plural'] . 'Import.php', "w");
+$file = fopen('generated/app/Imports/'. $text['camelUpper']['plural'] . 'Import.php', "w");
 fputs($file, $import_content);
 fclose($file);
