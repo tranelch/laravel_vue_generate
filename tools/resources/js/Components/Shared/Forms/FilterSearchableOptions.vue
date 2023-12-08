@@ -5,7 +5,7 @@
 
 <template>
   <div class="flex">
-    <label v-if="label" :for="'api-lookup-' + $attrs.id" class="w-1/2">{{ label }}:</label>
+    <label v-if="label" :for="'lookup-' + $attrs.id" class="w-1/2">{{ label }}:</label>
     <div class="form-input-wrap">
       <input
         :id="$attrs.id + '-search'"
@@ -17,7 +17,7 @@
       >
       <div v-if="emptyDataset">No results were found for that search term</div>
       <div v-show="showSelect" class="options-container">
-        <select :id="'api-lookup-' + $attrs.id" v-model="selectValue" class="form-input" @change="handleChange">
+        <select :id="'lookup-' + $attrs.id" v-model="selectValue" class="form-input" @change="handleChange">
           <template v-for="result in dataResults" :key="result.key">
             <option :value="result.id">
               {{ modelDisplayString(result) }}
@@ -102,7 +102,7 @@ setup(props, context) {
                 if (dataResults.value.length === 1 ) {
                     context.emit('update:modelValue', dataResults.value[0].id)
                 }
-                document.getElementById('api-lookup-' + context.attrs.id).setAttribute('size', 5)
+                document.getElementById('lookup-' + context.attrs.id).setAttribute('size', 5)
             })
             .catch((err) => {
                 flash('error', 'Sorry, lookup that information.  Please reload the page and try again.')

@@ -1,23 +1,6 @@
 <template>
-  <DataListingLayout v-model="form" :baseUrl="baseUrl" searchPlaceholder="Search by name, email, timezone and user group" :secondaryNav="secondaryNav" :pagination="paginationData" @update:modelValue="updateSearch(baseUrl, queryString)">
+  <DataListingLayout v-model="form" :baseUrl="baseUrl" searchPlaceholder="Search by name, email and user group" :secondaryNav="secondaryNav" :pagination="paginationData" @update:modelValue="updateSearch(baseUrl, queryString)">
     <template #filters>
-      <FilterSearchableOptions
-        id="carrier-filter"
-        v-model:searchquery="carrierSearchquery" v-model="form.carrier_id"
-        label="Carrier" name="carrier" placeholder="Search by Carrier Name, City or Carrier Code" lookup_url="/api/user/carriers/search/{search}"
-        :displayField="['label', 'carrier_name']" :error="errors.carrier_id"
-        @updateFlash="$emit('updateFlash', $event)"
-      />
-      <FilterSearchableOptions
-        id="saas-subscription-filter"
-        v-model:searchquery="saasSubscriptionSearchquery" v-model="form.saas_subscription_id"
-        label="Saas Subscription" name="saas_subscription" placeholder="Search by Name" lookup_url="/api/user/saas_subscriptions/search/{search}"
-        displayField="name" :error="errors.saas_subscription_id"
-        @updateFlash="$emit('updateFlash', $event)"
-      />
-
-      <!--<FormsSelectLazyOptions v-model="form.saas_subscription_id" label="SaaS Subscription" id="saas_subscription_id" displayField="name" lookup_url="/api/user/saas_subscriptions/options" :error="errors.saas_subscription_id" placeholder="Select SaaS Subscription" />-->
-
       <FilterSelectInput
         id="accepted_terms" v-model="form.accepted_terms" name="accepted_terms" label="Accepted Terms"
         :options="[{null: 'All'}, {yes: 'Yes'}, {no: 'No'}]"
@@ -44,12 +27,9 @@
         <tr>
           <th>Action</th>
           <th class="sortable" :class="sort.sortOrder('name')" @click="sort.addColumnToSort('name', baseUrl, getFilterQueryString(form))">Name</th>
-          <th v-if="permissions.can('users.saas-subscriptions.assign')" class="sortable" :class="sort.sortOrder('saas_subscription.name')" @click="sort.addColumnToSort('saas_subscription.name', baseUrl, getFilterQueryString(form))">Subscription Account</th>
-          <th v-if="permissions.can('users.carriers.assign')" class="sortable" :class="sort.sortOrder('carrier.carrier_name')" @click="sort.addColumnToSort('carrier.carrier_name', baseUrl, getFilterQueryString(form))">Carrier</th>
           <th class="sortable" :class="sort.sortOrder('acl_groups.name')" @click="sort.addColumnToSort('acl_groups.name', baseUrl, getFilterQueryString(form))">User Group</th>
           <th class="sortable" :class="sort.sortOrder('email')" @click="sort.addColumnToSort('email', baseUrl, getFilterQueryString(form))">Email</th>
           <th class="sortable" :class="sort.sortOrder('accepted_terms')" @click="sort.addColumnToSort('accepted_terms', baseUrl, getFilterQueryString(form))">Accepted Terms</th>
-          <th class="sortable" :class="sort.sortOrder('timezone')" @click="sort.addColumnToSort('timezone', baseUrl, getFilterQueryString(form))">Timezone</th>
         </tr>
       </thead>
       <tbody>
@@ -65,12 +45,9 @@
             <GridButton v-if="permissions.can(permissionBase + '.users.create') && !user.accepted_terms" icon="envelope" title="Resend Notification" @click="resendNotification(user)" />
           </td>
           <td>{{ user.name }}</td>
-          <td v-if="permissions.can('users.saas-subscriptions.assign')"><template v-if="user.saas_subscription">{{ user.saas_subscription.name }}</template></td>
-          <td v-if="permissions.can('users.carriers.assign')"><template v-if="user.carrier">{{ user.carrier.carrier_name }}</template></td>
           <td><template v-if="user.acl_groups"><div v-for="(group, index) in user.acl_groups" :key="index">{{ group.name }} </div></template></td>
           <td>{{ user.email }}</td>
           <td class="boolean"><Grids3PositionToggleDisplay :value="user.accepted_terms" /></td>
-          <td>{{ user.timezone }}</td>
         </tr>
       </tbody>
     </table>
@@ -148,9 +125,6 @@ export default {
         const flash = (keyIn, value) => {
             emit('updateFlash', [keyIn, value])
         }
-
-        const carrierSearchquery = ref('')
-        const saasSubscriptionSearchquery = ref('')
 
         const modalUser = ref({})
         const showUserInfoModal = ref(false)
@@ -303,7 +277,6 @@ export default {
             permissions, hasUsers,
             canDeactivate, remove, canRestore, restore,
             impersonate, canImpersonate, resendNotification, resendPassword, reset2fa,
-            saasSubscriptionSearchquery, carrierSearchquery,
         }
     }
 };

@@ -28,11 +28,11 @@
 $permissionsSql .= "
     INSERT INTO `acl_permissions` (`id`, `name`, `guard_name`, `description`, `deleted_at`, `created_at`, `updated_at`)
     VALUES
-        (NULL, 'Create " . $text['spacedUpper']['plural'] . "', '{SECTION-camelPl}." . $text['camel']['plural'] . ".create', 'Create " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
-        (NULL, 'Edit " . $text['spacedUpper']['plural'] . "', '{SECTION-camelPl}." . $text['camel']['plural'] . ".edit', 'Edit " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
-        (NULL, 'View " . $text['spacedUpper']['plural'] . "', '{SECTION-camelPl}." . $text['camel']['plural'] . ".view', 'View " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
-        (NULL, 'Remove " . $text['spacedUpper']['plural'] . "', '{SECTION-camelPl}." . $text['camel']['plural'] . ".remove', 'Remove " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
-        (NULL, 'Restore " . $text['spacedUpper']['plural'] . "', '{SECTION-camelPl}." . $text['camel']['plural'] . ".restore', 'Restore " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL);
+        (NULL, '{SECTION-camelPl}." . $text['camel']['plural'] . ".create', 'web', 'Create " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
+        (NULL, '{SECTION-camelPl}." . $text['camel']['plural'] . ".edit', 'web', 'Edit " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
+        (NULL, '{SECTION-camelPl}." . $text['camel']['plural'] . ".view', 'web', 'View " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
+        (NULL, '{SECTION-camelPl}." . $text['camel']['plural'] . ".remove', 'web', 'Remove " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
+        (NULL, '{SECTION-camelPl}." . $text['camel']['plural'] . ".restore', 'web', 'Restore " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL);
 
     INSERT INTO acl_group_has_permissions (SELECT pm.id, {group_id}  FROM acl_permissions pm WHERE pm.guard_name LIKE '{SECTION-camelPl}." . $text['camel']['plural'] . ".%' AND NOT EXISTS(SELECT * FROM acl_group_has_permissions WHERE group_id = {group_id} AND permission_id = pm.id ));
 ";

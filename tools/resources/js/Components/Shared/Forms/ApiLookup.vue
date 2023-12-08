@@ -18,7 +18,7 @@
     >
     <div v-if="emptyDataset">No results were found for that search term</div>
     <div v-show="showSelect" class="options-container">
-      <select :id="'api-lookup-' + $attrs.id" :value="modelValue" class="form-input" tabindex="-1" @change="handleChange">
+      <select :id="'lookup-' + $attrs.id" :value="modelValue" class="form-input" tabindex="-1" @change="handleChange">
         <option v-if="Object.keys(initialValue).length > 0" selected :value="initialValue">{{ modelDisplayString(initialValue) }}</option>
         <template v-for="result in dataResults" :key="result.key">
           <option v-if="Object.keys(initialValue).length > 0 || initialValue.id !== result.id" :value="result" @click="triggerChange(result)">
@@ -106,7 +106,7 @@ setup(props, context) {
 
     const resetSearch = (e) => {
         //if focus goes to the select element, do nothing
-        if(document.getElementById('api-lookup-' + context.attrs.id) === e.relatedTarget) return
+        if(document.getElementById('lookup-' + context.attrs.id) === e.relatedTarget) return
 
         //reset search, and revert to
         isSubmitted.value = false
@@ -137,7 +137,7 @@ setup(props, context) {
                     if (dataResults.value.length === 1 ) {
                         triggerChange(dataResults.value[0])
                     }
-                    document.getElementById('api-lookup-' + context.attrs.id).setAttribute('size', 5)
+                    document.getElementById('lookup-' + context.attrs.id).setAttribute('size', 5)
                 })
                 .catch((err) => {
                     flash('error', 'Sorry, we could not look up that information.  Please reload the page and try again.')
@@ -165,7 +165,7 @@ setup(props, context) {
     }
 
     const keyClick = (e) => {
-        let selectEl = document.getElementById('api-lookup-' + context.attrs.id)
+        let selectEl = document.getElementById('lookup-' + context.attrs.id)
         if (e.keyCode == 38 && selectEl.selectedIndex > -1) {
             selectEl.selectedIndex--
         } else if (e.keyCode == 40 && selectEl.selectedIndex < selectEl.options.length) {

@@ -110,7 +110,7 @@ import " . $text['camelUpper']['singular'] . "EditForm from '@/Components/" . $t
 export default {
   components: {
     AppLayout,
-    " . $text['camelUpper']['plural'] . "EditForm,
+    " . $text['camelUpper']['singular'] . "EditForm,
   },
 
   props: {

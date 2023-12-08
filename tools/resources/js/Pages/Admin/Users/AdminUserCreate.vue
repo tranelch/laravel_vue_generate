@@ -1,7 +1,7 @@
 
 <template>
     <AppLayout title="Create User">
-        <UserEditForm :edit_user="edit_user" :timezones="timezones" :post_url="baseUrl" :permissionBase="permissionBase" :secondaryNav="secondaryNav" :errors="errors" />
+        <UserEditForm :edit_user="edit_user" :post_url="baseUrl" :permissionBase="permissionBase" :secondaryNav="secondaryNav" :errors="errors" />
     </AppLayout>
 </template>
 
@@ -20,10 +20,6 @@ export default {
         edit_user: {
             type: Object,
             default: () => ({}),
-        },
-        timezones: {
-            type: Object,
-            required: true,
         },
         errors: {
             type: Object,

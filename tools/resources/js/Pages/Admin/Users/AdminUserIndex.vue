@@ -15,7 +15,7 @@
 import { ref, inject } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { Link } from '@inertiajs/vue3';
-import UsersList from '@/Components/Users/UsersList'
+import UsersList from '@/Components/Users/UsersList.vue'
 
 export default {
     components: {

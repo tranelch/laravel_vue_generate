@@ -14,18 +14,16 @@ use Laravel\Jetstream\HasProfilePhoto;
 
 
 
-//use App\Models\AclGroup;
+use App\Models\AclGroup;
 //use App\Models\AclUserHasGroup;
 //use App\Models\AclUserHasPermission;
-use Junges\ACL\Models\Group as AclGroup;
-use Junges\ACL\Models\Permission as AclPermission;
+use Junges\ACL\Models\Group;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
-//use Junges\ACL\Concerns\UsersTrait;
 use Junges\ACL\Concerns\HasGroups;
+use Junges\ACL\Concerns\HasPermissions;
 
 /**
  * Class User
@@ -33,20 +31,16 @@ use Junges\ACL\Concerns\HasGroups;
  * @property int $id
  * @property string $name
  * @property string|null $username
- * @property int|null $saas_subscription_id
- * @property int|null $carrier_id
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $ip_address
  * @property bool|null $accepted_terms
- * @property string|null $timezone
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property string|null $remember_token
  * @property int|null $current_team_id
  * @property string|null $profile_photo_path
- * @property Carbon|null $last_login_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -57,7 +51,7 @@ use Junges\ACL\Concerns\HasGroups;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes,
-        Impersonate, HasProfilePhoto, HasGroups;// HasApiTokens, UsersTrait, ;
+        Impersonate, HasProfilePhoto, HasGroups;// HasApiTokens, HasPermissions, UsersTrait, ;
 
     /**
      * The attributes that should be cast.
@@ -67,7 +61,6 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'accepted_terms' => 'bool',
         'email_verified_at' => 'datetime',
-        'last_login_at' => 'date'
     ];
 
     /**
@@ -86,7 +79,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'two_factor_secret',
         'two_factor_recovery_codes',
         'remember_token',
-        'last_login_at'
     ];
 
     /**
@@ -231,15 +223,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(AclGroup::class, 'acl_model_has_groups', 'model_id', 'group_id');
     }
-
-    /*** BASE RELATIONSHIPS BELOW  **********/
-    /*public function acl_user_has_groups()
-    {
-        return $this->hasMany(AclUserHasGroup::class);
-    }*/
-
-    /*public function acl_user_has_permissions()
-    {
-        return $this->hasMany(AclUserHasPermission::class);
-    }*/
 }

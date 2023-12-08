@@ -17,9 +17,29 @@ require('includes/Pluralize.php');
 $arrTableResult = $mysqli->query("SHOW TABLES FROM `$db_name`");
 $routes = [
     'base' => "/* FIND AND REPLACE\n{SECTION-camelPl}. : permissions\n{SECTION-camelUp}\ : controller path*/\n\n",
-    'admin' => "\n\n    Route::prefix('admin')->group(function () {"
+    'lookup' => "\n\n    Route::prefix('lookup')->group(function () {
+
+    }",
+    'admin' => "\n\n    Route::prefix('admin')->group(function () {",
 ];
-$permissionsSql = "/* FIND AND REPLACE\n{SECTION-camelPl}. \n{group_id}\n*/\n\n";
+$permissionsSql = "/* FIND AND REPLACE\n{SECTION-camelPl}. \n{group_id}\n*/\n
+    INSERT INTO `users` (`id`, `name`, `username`, `email`, `email_verified_at`, `password`, `ip_address`, `accepted_terms`, `two_factor_secret`, `two_factor_recovery_codes`, `remember_token`, `current_team_id`, `profile_photo_path`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 'Chris', NULL, 'tranel@earthlinginteractive.com', '2023-12-06 20:25:02', '$2y$12\$krma209lNfeMYEWGJy/hVeAHOp.S0cMFNGTTWIDID4Rnez8CXsV5.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2023-12-06 19:37:01', '2023-12-06 20:25:02', NULL);
+    INSERT INTO `acl_groups` (`id`, `name`, `guard_name`, `description`, `deleted_at`, `created_at`, `updated_at`) VALUES 
+        (1, 'admin', 'web', 'Admin', NULL,  NULL,  NULL),
+        (2, 'mortal', 'web', 'Mortal', NULL,  NULL,  NULL);
+    INSERT INTO `acl_model_has_groups` (`group_id`, `model_type`, `model_id`) VALUES (1, 'App\\Models\\User', 1);
+    INSERT INTO `acl_group_managed_groups` (`id`, `group_id`, `managed_group_id`) VALUES (1, 1, 1),(2, 1, 2);
+    INSERT INTO `acl_permissions` (`id`, `name`, `guard_name`, `description`, `deleted_at`, `created_at`, `updated_at`)
+    VALUES
+        (NULL, 'admin.users.create', 'web', 'Create Users', NULL, NULL, NULL),
+        (NULL, 'admin.users.edit', 'web', 'Edit Users', NULL, NULL, NULL),
+        (NULL, 'admin.users.view', 'web', 'View Users', NULL, NULL, NULL),
+        (NULL, 'admin.users.remove', 'web', 'Remove Users', NULL, NULL, NULL),
+        (NULL, 'admin.users.restore', 'web', 'Restore Users', NULL, NULL, NULL)
+        (NULL, 'users.groups.assign', 'web', 'Assign User Groups', NULL, NULL, NULL);
+    INSERT INTO acl_group_has_permissions (SELECT pm.id, 1 FROM acl_permissions pm WHERE pm.name LIKE 'admin.users.%' AND NOT EXISTS(SELECT * FROM acl_group_has_permissions WHERE group_id = 1 AND permission_id = pm.id ));
+    INSERT INTO acl_group_has_permissions (SELECT pm.id, 1 FROM acl_permissions pm WHERE pm.name LIKE 'users.groups.assign' AND NOT EXISTS(SELECT * FROM acl_group_has_permissions WHERE group_id = 1 AND permission_id = pm.id ));
+    ";
 $menuData = "/* FIND AND REPLACE\n{SECTION-camelPl}. : permissions\n/{SECTION-kabob} : route path\n*/\n\n[\n";
 
 while ($table = $arrTableResult->fetch_array()[0]) { //iterate through tables
@@ -121,7 +141,7 @@ while ($table = $arrTableResult->fetch_array()[0]) { //iterate through tables
                 //$vue_form_text .= "      <input type=\"hidden\" v-model=\"form.id\" id=\"id\" name=\"id\" />\n";
             } elseif (str_ends_with($field, '_id')) {
                 $field_list_controller_validation .= "            '$field' => ['nullable', " . "'integer'],\n";
-                $vue_form_text .= "      <ApiLookup v-model=\"form.$field\" id=\"$field\" name=\"$field\" label=\"$field_label\" multiple=\"multiple\" displayField=\"name\" lookup_url=\"/api/".$field."_lookup\" @input=\"onSelected" . $text['camelUpper']['singular'] . "\" placeholder=\"Select your $field_label\" :error=\"errors.$field\" />\n";
+                $vue_form_text .= "      <ApiLookup v-model=\"form.$field\" id=\"$field\" name=\"$field\" label=\"$field_label\" multiple=\"multiple\" displayField=\"name\" lookup_url=\"/lookup/".$field."_lookup\" @input=\"onSelected" . $text['camelUpper']['singular'] . "\" placeholder=\"Select your $field_label\" :error=\"errors.$field\" />\n";
             } elseif (str_contains($fieldObj->Type, 'datetime')) {
                 $field_list_controller_validation .= "            '$field' => ['nullable', 'date'],\n";
                 $vue_form_text .= "      <FormsDateTimeInput v-model=\"form.$field\" id=\"$field\" name=\"$field\" label=\"$field_label\" :error=\"errors.$field\" />\n";

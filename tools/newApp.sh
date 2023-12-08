@@ -43,6 +43,7 @@ composer require orangehill/iseed --dev
 composer require pestphp/pest --dev
 composer require pestphp/pest-plugin-laravel --dev
 composer require reliese/laravel --dev
+composer require barryvdh/laravel-debugbar --dev
 
 php artisan acl:install
 php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" --tag=config

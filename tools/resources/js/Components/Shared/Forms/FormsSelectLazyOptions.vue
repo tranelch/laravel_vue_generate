@@ -30,7 +30,7 @@
         props: {
             id: {
                 type: String,
-                default: 'api-lookup',
+                default: 'lookup',
             },
             displayField: {
                 type: String,

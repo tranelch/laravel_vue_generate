@@ -16,25 +16,10 @@
 			</div>
 		</div>
 		<hr class="my-3" />
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-			<div>
-				<strong class="block">SaaS Subscription</strong>
-				<span v-if="show_user.saas_subscription" class="block">{{ show_user.saas_subscription.name }}</span>
-			</div>
-			<div>
-				<strong class="block">Carrier</strong>
-				<span v-if="show_user.carrier" class="block">{{ show_user.carrier.carrier_name }}</span>
-			</div>
-		</div>
-		<hr class="my-3" />
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+		<div class="grid grid-cols-1 gap-4">
 			<div>
 				<strong class="block">User Groups</strong>
 				<span v-if="show_user.acl_groups" class="block"><template v-for="(group, index) in show_user.acl_groups" :key="index">{{ group.name }} </template></span>
-			</div>
-			<div>
-				<strong class="block">Timezone</strong>
-				<span v-if="show_user.timezone" class="block">{{ show_user.timezone }}</span>
 			</div>
 		</div>
 		<hr class="my-3" />

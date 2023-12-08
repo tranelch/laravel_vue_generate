@@ -1,7 +1,7 @@
 
 <template>
     <AppLayout title="Edit User">
-        <UserEditForm :edit_user="edit_user" :timezones="timezones" :put_url="baseUrl + '/' + edit_user.id" :permissionBase="permissionBase" :secondaryNav="secondaryNav" :errors="errors" />
+        <UserEditForm :edit_user="edit_user" :put_url="baseUrl + '/' + edit_user.id" :permissionBase="permissionBase" :secondaryNav="secondaryNav" :errors="errors" />
     </AppLayout>
 </template>
 
@@ -18,10 +18,6 @@ export default {
 
     props: {
         edit_user: {
-            type: Object,
-            required: true,
-        },
-        timezones: {
             type: Object,
             required: true,
         },

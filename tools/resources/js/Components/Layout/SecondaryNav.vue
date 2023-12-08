@@ -63,34 +63,6 @@ export default {
                 return 'active'
             }
 
-            // Handle deeper links
-            if (
-                (currentUrlSections[0].includes('/saas_subscription_customer_contacts') && linkUrlSections[0].includes('/saas_subscription_customer_contacts')) ||
-                (currentUrlSections[0].includes('/broker_contacts') && linkUrlSections[0].includes('/broker_contacts')) ||
-                (currentUrlSections[0].includes('/premium_carrier_contacts') && linkUrlSections[0].includes('/premium_carrier_contacts')) ||
-                (currentUrlSections[0].includes('/driver_lists') && linkUrlSections[0].includes('/driver_lists'))
-            ) {
-                return 'active'
-            }
-
-            // Premium carrier pages
-            if (currentUrlSections[0].includes('carrier/carriers/')) {
-                if (currentUrlSections[0].match(/^\D+/)[0].replace(/^\/|\/$/g, '') === linkUrlSections[0].match(/^\D+/)[0].replace(/^\/|\/$/g, '')) {
-                    return 'active'
-                }
-            }
-
-            // Admin premium carrier pages
-            if (currentUrlSections[0].includes('admin/carriers/')) {
-                if (
-                    (currentUrlSections[0].includes('/drivers') && linkUrlSections[0].includes('/drivers')) ||
-                    (currentUrlSections[0].includes('/trucks') && linkUrlSections[0].includes('/trucks')) ||
-                    (currentUrlSections[0].includes('/trailers') && linkUrlSections[0].includes('/trailers'))
-                ) {
-                    return 'active'
-                }
-            }
-
             return ''
         }
 

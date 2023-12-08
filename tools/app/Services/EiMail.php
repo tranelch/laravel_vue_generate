@@ -27,11 +27,11 @@ class LfMail
      */
     public static function send(array $to, string $subject, string $template, object $data, string $replyToAddress = null, string $fromName = null, array $attachments=null, array $cc=null): ?bool {
         if (empty($to)) {
-            throw new \Exception('No recipients were specified, no email was sent.  Please check carrier, broker and customer contacts and make sure they are set up to receive emails.');
+            throw new \Exception('No recipients were specified, no email was sent.');
         }
 
         if (empty($subject) || empty($template) || empty($data)) {
-            throw new \Exception('The email failed to send due to a programming error.  Please contact Liquid Freight.');
+            throw new \Exception('The email failed to send due to a programming error.');
         }
 
         $to = self::setTo($to, $cc);
