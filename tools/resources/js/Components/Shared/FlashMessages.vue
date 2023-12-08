@@ -39,7 +39,7 @@ export default {
 
         const messages = computed(() => {
              //let pageMessages = Object.entries(props.pageFlash).filter(([k, v]) => v != null && messageKeys.indexOf(k) >= 0)
-            let ErrorLength = Object.keys(usePage().props.value.errors).length
+            let ErrorLength = Object.keys(usePage().props.errors).length
             let formMessages = []
             if ((ErrorLength > 1)) formMessages.push(['error', 'There are ' + ErrorLength + ' form errors.  Please see the form for specific errors.'])
             else if (ErrorLength === 1) formMessages.push(['error', 'There is one form error.  Please see the form for specific error.'])

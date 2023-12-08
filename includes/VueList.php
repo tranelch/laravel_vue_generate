@@ -29,7 +29,7 @@ $vue_report_line
     </table>
 
     <Modal v-if=\"modal" . $text['camelUpper']['singular'] . ".id\" :show=\"show" . $text['camelUpper']['singular'] . "InfoModal\" @close=\"show" . $text['camelUpper']['singular'] . "InfoModal = false\">
-      <" . $text['camelUpper']['plural'] . "Info :" . $text['camel']['singular'] . "=\"modal" . $text['camelUpper']['singular'] . "\" @closeModal=\"show" . $text['camelUpper']['singular'] . "InfoModal = false\" />
+      <" . $text['camelUpper']['singular'] . "Info :" . $text['camel']['singular'] . "=\"modal" . $text['camelUpper']['singular'] . "\" @closeModal=\"show" . $text['camelUpper']['singular'] . "InfoModal = false\" />
     </Modal>
   </DataListingLayout>
 </template>
@@ -51,7 +51,7 @@ import useQuerystring from '@/composables/useQuerystring.js'
 
 export default {
   components: {
-    " . $text['camelUpper']['plural'] . "Info,
+    " . $text['camelUpper']['singular'] . "Info,
     Modal,
     DataListingLayout,
     GridButton,

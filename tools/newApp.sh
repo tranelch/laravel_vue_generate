@@ -62,5 +62,7 @@ php artisan code:models
 
 # Copy model snippets from generator (config must be before migration, and model snippets after model generation)
 
+php artisan group:create Admin admin Admin
+
 # make directory accessible
 valet link

@@ -3,9 +3,8 @@ import { provide } from "vue";
 export default {
     install: (app, options) => {
         function can(routeString) {
-            //var action = /[^.]*$/.exec(routeString)[0];
             var permissions = app.config.globalProperties.$page.props.appPermissions;
-            //return ['*', action, routeString].some(value => permissions.indexOf(value) >= 0)
+            routeString = routeString.replace(/^\.+|\.+$/g, '');
 
             return permissions.filter(
                 (permission) =>

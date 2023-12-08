@@ -26,7 +26,7 @@
 
 
 $permissionsSql .= "
-    INSERT INTO `acl_permissions` (`id`, `name`, `slug`, `description`, `deleted_at`, `created_at`, `updated_at`)
+    INSERT INTO `acl_permissions` (`id`, `name`, `guard_name`, `description`, `deleted_at`, `created_at`, `updated_at`)
     VALUES
         (NULL, 'Create " . $text['spacedUpper']['plural'] . "', '{SECTION-camelPl}." . $text['camel']['plural'] . ".create', 'Create " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
         (NULL, 'Edit " . $text['spacedUpper']['plural'] . "', '{SECTION-camelPl}." . $text['camel']['plural'] . ".edit', 'Edit " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
@@ -34,7 +34,7 @@ $permissionsSql .= "
         (NULL, 'Remove " . $text['spacedUpper']['plural'] . "', '{SECTION-camelPl}." . $text['camel']['plural'] . ".remove', 'Remove " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL),
         (NULL, 'Restore " . $text['spacedUpper']['plural'] . "', '{SECTION-camelPl}." . $text['camel']['plural'] . ".restore', 'Restore " . $text['spacedUpper']['plural'] . "', NULL, NULL, NULL);
 
-    INSERT INTO acl_group_has_permissions (SELECT {group_id}, pm.id  FROM acl_permissions pm WHERE pm.slug LIKE '{SECTION-camelPl}." . $text['camel']['plural'] . ".%' AND NOT EXISTS(SELECT * FROM acl_group_has_permissions WHERE group_id = {group_id} AND permission_id = pm.id ));
+    INSERT INTO acl_group_has_permissions (SELECT pm.id, {group_id}  FROM acl_permissions pm WHERE pm.guard_name LIKE '{SECTION-camelPl}." . $text['camel']['plural'] . ".%' AND NOT EXISTS(SELECT * FROM acl_group_has_permissions WHERE group_id = {group_id} AND permission_id = pm.id ));
 ";
 
 $menuData .= '
@@ -43,15 +43,14 @@ $menuData .= '
         "route": "/{SECTION-kabob}/' . $text['kabob']['plural'] . '",
         "icon": "",
         "class": "' . $text['kabob']['plural'] . '",
-        "permissions": ["{SECTION-camelPl}.' . $text['camel']['plural'] . '.view"],
+        "permissions": "{SECTION-camelPl}.' . $text['camel']['plural'] . '.view",
         "children": [],
-        "attributes": [],
-    },
-';
+        "attributes": []
+    },';
 
 //Admin
 /*$permissionsSql .= "
-    INSERT INTO `acl_permissions` (`id`, `name`, `slug`, `description`, `deleted_at`, `created_at`, `updated_at`)
+    INSERT INTO `acl_permissions` (`id`, `name`, `guard_name`, `description`, `deleted_at`, `created_at`, `updated_at`)
     VALUES
         (NULL, 'Admin Create " . $text['spacedUpper']['plural'] . "', 'admin.{SECTION-camelPl}." . $text['camel']['plural'] . ".create', 'Create My " . $text['spacedUpper']['plural'] . " in Admin', NULL, NULL, NULL),
         (NULL, 'Admin Edit " . $text['spacedUpper']['plural'] . "', 'admin.{SECTION-camelPl}." . $text['camel']['plural'] . ".edit', 'Edit My " . $text['spacedUpper']['plural'] . " in Admin', NULL, NULL, NULL),
@@ -59,5 +58,5 @@ $menuData .= '
         (NULL, 'Admin Restore " . $text['spacedUpper']['plural'] . "', 'admin.{SECTION-camelPl}." . $text['camel']['plural'] . ".restore', 'Restore My " . $text['spacedUpper']['plural'] . " in Admin', NULL, NULL, NULL),
         (NULL, 'Admin View " . $text['spacedUpper']['plural'] . "', 'admin.{SECTION-camelPl}." . $text['camel']['plural'] . ".view', 'View My " . $text['spacedUpper']['plural'] . " in Admin', NULL, NULL, NULL);
 
-    INSERT INTO acl_group_has_permissions (SELECT 1, pm.id  FROM acl_permissions pm WHERE NOT EXISTS(SELECT * FROM acl_group_has_permissions WHERE group_id = 1 AND permission_id = pm.id AND pm.slug LIKE 'admin.%' ) INSERT INTO acl_group_has_permissions (SELECT 1, pm.id  FROM acl_permissions pm WHERE NOT EXISTS(SELECT * FROM acl_group_has_permissions WHERE group_id = 1 AND permission_id = pm.id AND pm.slug LIKE 'admin.%' ) AND pm.slug LIKE 'admin.%'););
+    INSERT INTO acl_group_has_permissions (SELECT 1, pm.id  FROM acl_permissions pm WHERE NOT EXISTS(SELECT * FROM acl_group_has_permissions WHERE group_id = 1 AND permission_id = pm.id AND pm.guard_name LIKE 'admin.%' ) INSERT INTO acl_group_has_permissions (SELECT 1, pm.id  FROM acl_permissions pm WHERE NOT EXISTS(SELECT * FROM acl_group_has_permissions WHERE group_id = 1 AND permission_id = pm.id AND pm.guard_name LIKE 'admin.%' ) AND pm.guard_name LIKE 'admin.%'););
 ";*/

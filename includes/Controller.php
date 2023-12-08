@@ -5,6 +5,7 @@ FIND AND REPLACE
 \{SECTION-camelUp}: Namespace 
 {SECTION-camelUp}/: inertia modules
 {SECTION-camelPl}.: Permissions
+{DEFAULT SORT COLUMN}
 */
 declare(strict_types = 1);
 

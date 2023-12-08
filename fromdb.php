@@ -19,8 +19,8 @@ $routes = [
     'base' => "/* FIND AND REPLACE\n{SECTION-camelPl}. : permissions\n{SECTION-camelUp}\ : controller path*/\n\n",
     'admin' => "\n\n    Route::prefix('admin')->group(function () {"
 ];
-$permissionsSql = "/* FIND AND REPLACE\n{SECTION-camelPl}. */\n\n";
-$menuData = "/* FIND AND REPLACE\n{SECTION-camelPl}. : permissions\n/{SECTION-kabob} : route path\n*/\n\n";
+$permissionsSql = "/* FIND AND REPLACE\n{SECTION-camelPl}. \n{group_id}\n*/\n\n";
+$menuData = "/* FIND AND REPLACE\n{SECTION-camelPl}. : permissions\n/{SECTION-kabob} : route path\n*/\n\n[\n";
 
 while ($table = $arrTableResult->fetch_array()[0]) { //iterate through tables
     if (str_starts_with($table, 'liq_') || str_starts_with($table, 'jos') || str_starts_with($table, 'failed') || str_starts_with($table, 'error') || str_starts_with($table, 'acl')) {

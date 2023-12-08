@@ -2,26 +2,30 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
+//use Laravel\Sanctum\HasApiTokens;
 //use Laravel\Passport\HasApiTokens;
 
 
 
-use App\Models\AclGroup;
-use App\Models\AclUserHasGroup;
-use App\Models\AclUserHasPermission;
+//use App\Models\AclGroup;
+//use App\Models\AclUserHasGroup;
+//use App\Models\AclUserHasPermission;
+use Junges\ACL\Models\Group as AclGroup;
+use Junges\ACL\Models\Permission as AclPermission;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\Rule;
-use Junges\ACL\Concerns\UsersTrait;
 use Lab404\Impersonate\Models\Impersonate;
+//use Junges\ACL\Concerns\UsersTrait;
+use Junges\ACL\Concerns\HasGroups;
 
 /**
  * Class User
@@ -53,7 +57,7 @@ use Lab404\Impersonate\Models\Impersonate;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes,
-        UsersTrait, Impersonate, HasProfilePhoto;// HasApiTokens;
+        Impersonate, HasProfilePhoto, HasGroups;// HasApiTokens, UsersTrait, ;
 
     /**
      * The attributes that should be cast.
@@ -104,7 +108,8 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     // Managed groups are ACL groups that a user is allowed to edit, view and select when managing other users
-    public function managedGroups() {
+    public function managedGroups()
+    {
         $this->acl_groups->load('managed_acl_groups');
         return $this->acl_groups->map(function ($item, $key) {
             return $item->managed_acl_groups->transform(function ($item, $key) {
@@ -112,7 +117,8 @@ class User extends Authenticatable implements MustVerifyEmail
             });
         })->flatten(1);
     }
-    public function managedGroupIds() {
+    public function managedGroupIds()
+    {
         $this->acl_groups->load('managed_acl_groups');
         return $this->acl_groups->map(function ($item, $key) {
             return $item->managed_acl_groups->pluck('id');
@@ -122,10 +128,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function active_scheduled_messages()
     {
         //return $this->hasMany(ScheduledMessage::class)->where('receive_invoice_emails', 1)->whereNotNull('email');
-        $messages = ScheduledMessage::where( function ($q) {
+        $messages = ScheduledMessage::where(function ($q) {
             $q->whereIn('acl_group_id', $this->acl_groups->pluck('id')->toArray())
                 ->orWhereNULL('acl_group_id');
-        })->where( function ($q) {
+        })->where(function ($q) {
             $q->whereRaw('CURRENT_TIMESTAMP between display_start_time and display_end_time')
                 ->orWhereNULL('display_start_time', 'display_start_time');
         })
@@ -137,14 +143,15 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $sortables = ['name','email','acl_groups.name'];
     protected $searchColumns = ['name','email','acl_groups.name'];
 
-    public function scopeFilter(Builder $query, array $filters) {
+    public function scopeFilter(Builder $query, array $filters)
+    {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->lfSearch($this->searchColumns, $search, 'users');
         })->when($filters['accepted_terms'] ?? null, function ($query, $accepted_terms) {
             $query->where('users.accepted_terms', $accepted_terms === 'yes' ? 1 : 0);
         })->when($filters['groups'] ?? null, function ($query, $value) {
-            $query->leftJoin('acl_user_has_groups', 'users.id', 'acl_user_has_groups.user_id')
-                ->whereIn('acl_user_has_groups.group_id', $value);
+            $query->leftJoin('acl_model_has_groups', 'users.id', 'acl_model_has_groups.model_id')
+                ->whereIn('acl_model_has_groups.group_id', $value);
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ($trashed === 'with') {
                 $query->withTrashed();
@@ -172,8 +179,8 @@ class User extends Authenticatable implements MustVerifyEmail
                 //make case statement for unique sorts
                 case 'acl_groups.name':
                     $query->select('users.*')
-                        ->leftJoin('acl_user_has_groups', 'users.id', '=', 'acl_user_has_groups.user_id')
-                        ->leftJoin('acl_groups', 'acl_user_has_groups.group_id', '=', 'acl_groups.id')
+                        ->leftJoin('acl_model_has_groups', 'users.id', '=', 'acl_model_has_groups.model_id')
+                        ->leftJoin('acl_groups', 'acl_model_has_groups.group_id', '=', 'acl_groups.id')
                         ->orderBy('acl_groups.name', $direction);
                     break;
                 default:
@@ -184,7 +191,7 @@ class User extends Authenticatable implements MustVerifyEmail
                     break;
             }
         }
-       return $query;
+        return $query;
     }
 
     public static function getValidationArray(?int $userId = null): Array
@@ -212,10 +219,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function setRememberToken($token)
     {
         // If admin user, clear remember me token
-        if(!empty(array_intersect($this->acl_groups->pluck('id')->toArray(), config('acl.admin_groups')))) {
+        if (!empty(array_intersect($this->acl_groups->pluck('id')->toArray(), config('acl.admin_groups')))) {
             $this->remember_token = null;
-        }
-        else {
+        } else {
             parent::setRememberToken($token);
         }
     }
@@ -223,18 +229,17 @@ class User extends Authenticatable implements MustVerifyEmail
     // RELATIONSHIPS
     public function acl_groups()
     {
-        return $this->belongsToMany(AclGroup::class, 'acl_user_has_groups', 'user_id', 'group_id');
+        return $this->belongsToMany(AclGroup::class, 'acl_model_has_groups', 'model_id', 'group_id');
     }
 
     /*** BASE RELATIONSHIPS BELOW  **********/
-    public function acl_user_has_groups()
+    /*public function acl_user_has_groups()
     {
         return $this->hasMany(AclUserHasGroup::class);
-    }
+    }*/
 
     /*public function acl_user_has_permissions()
     {
         return $this->hasMany(AclUserHasPermission::class);
     }*/
-
 }
